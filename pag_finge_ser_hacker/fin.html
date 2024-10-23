@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de Código</title>
+    <style>
+        body {
+            background: url('gif_fondo.gif') no-repeat center center fixed; /* Fondo GIF */
+            background-size: cover; /* Ajusta el tamaño del fondo */
+            color: green;
+            font-family: monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        #output {
+    width: 650px; /* Ancho del div */
+    height: 340px; /* Altura del div */
+    white-space: pre-wrap;
+    max-height: calc(100vh - 40px); /* Este valor se puede eliminar si ya se establece una altura fija */
+    overflow-y: auto; /* Scroll vertical si el contenido excede la altura */
+    padding-right: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para el texto */
+    position: absolute; /* Cambiado a absolute para centrar */
+    top: 50%; /* Mueve el div a la mitad de la altura de la ventana */
+    left: 50%; /* Mueve el div a la mitad del ancho de la ventana */
+    transform: translate(-50%, -50%); /* Ajusta el div para centrarlo exactamente */
+    border: 1px solid green; /* Agregando borde para visibilidad */
+    padding: 10px;
+}
+
+        #gif {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 10; /* Asegúrate de que esté encima del contenido */
+        }
+        #gif img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="output"></div>
+    <div id="gif">
+        <img src="subiendo.gif" alt="Loading..."> <!-- Cambia esto por tu GIF -->
+    </div>
+    <script>
+        const output = document.getElementById('output');
+        const gif = document.getElementById('gif');
+        const codeLines = [
+            '#include <iostream>',
+            '#include <vector>',
+            '#include <thread>',
+            '#include <chrono>',
+            'using namespace std;',
+            '',
+            'void conectarSistemaEmbebido(int sistemaID) {',
+            '    cout << "Conectando a sistema embebido: " << sistemaID << "..." << endl;',
+            '    this_thread::sleep_for(chrono::milliseconds(500));',
+            '    cout << "Conexión exitosa!" << endl;',
+            '}',
+            '',
+            'void subirScript(const string& script) {',
+            '    cout << "Subiendo script: " << script << "..." << endl;',
+            '    this_thread::sleep_for(chrono::milliseconds(300));',
+            '    cout << "Script subido con éxito!" << endl;',
+            '}',
+            '',
+            'void funcionRecursiva(int n) {',
+            '    if (n <= 0) return;',
+            '    cout << "Procesando: " << n << endl;',
+            '    this_thread::sleep_for(chrono::milliseconds(300));',
+            '    funcionRecursiva(n - 1);',
+            '}',
+            '',
+            'int main() {',
+            '    vector<int> sistemas = {101, 202, 303, 404};',
+            '    for (int id : sistemas) {',
+            '        conectarSistemaEmbebido(id);',
+            '        subirScript("script_" + to_string(id) + ".sh");',
+            '    }',
+            '    cout << "Iniciando proceso recursivo..." << endl;',
+            '    funcionRecursiva(5);',
+            '    cout << "Todos los procesos completados con éxito!" << endl;',
+            '    return 0;',
+            '}',
+            '',
+            ';section .data',
+            'msg db "Conexión establecida", 0',
+            'len equ $ - msg',
+            '',
+            ';section .text',
+            'global _start',
+            '_start: ',
+            '    mov edx, len',
+            '    mov ecx, msg',
+            '    mov ebx, 1',
+            '    mov eax, 4',
+            '    int 0x80',
+            '    ; Fin del programa',
+            '',
+            '    ; Simulando una operación adicional',
+            '    mov eax, 1',
+            '    int 0x80',
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+
+
+        let isRunning = false;
+        let sCounter = 0;
+        let sInterval;
+
+        document.addEventListener('keydown', (event) => {
+            if (lineIndex < codeLines.length) {
+                const line = codeLines[lineIndex];
+                if (charIndex < line.length) {
+                    output.innerText += line[charIndex];
+                    charIndex++;
+                } else {
+                    output.innerText += '\n';
+                    lineIndex++;
+                    charIndex = 0;
+                }
+                output.scrollTop = output.scrollHeight; // Scroll hacia abajo
+            }
+
+            // Si se presiona la tecla Enter
+            if (event.key === 'Enter') 
+            {
+                gif.style.display = 'flex'; // Muestra el GIF al presionar Enter
+
+                // Espera un segundo (1000 ms) antes de limpiar el output
+                setTimeout(() => {
+                    gif.style.display = 'none'; // Oculta el GIF
+                    output.innerText = ''; // Borra el contenido del output
+                    lineIndex = 0; // Reinicia el índice de línea
+                    charIndex = 0; // Reinicia el índice de carácter
+                }, 1000);
+
+                
+            }
+
+            else if (event.key === 'Control') 
+            {
+                if (!isRunning) {
+                    isRunning = true;
+                    startTypingS();
+                } else {
+                    isRunning = false;
+                    clearInterval(sInterval);
+                    sCounter = 0;
+                }
+            }
+
+            
+        });
+
+
+        function startTypingS() 
+        {
+            sInterval = setInterval(() => {
+                if (sCounter < 1500) {
+                    // Simular la tecla "s"
+                    simulateKeyPress('s');
+                    sCounter++;
+                } else {
+                    // Simular la tecla "Enter"
+                    simulateKeyPress('Enter');
+                    sCounter = 0;
+                }
+            }, 25);
+        }
+
+        function simulateKeyPress(key) {
+            let event = new KeyboardEvent('keydown', {
+                key: key,
+                bubbles: true,
+                cancelable: true,
+            });
+            document.dispatchEvent(event);
+        }
+
+
+
+    </script>
+</body>
+</html>
